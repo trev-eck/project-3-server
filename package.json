@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/JoshTDesign/project-3-server#readme",
   "dependencies": {
+    "amadeus": "^5.7.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cloudinary": "^1.25.2",

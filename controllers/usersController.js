@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const tokenAuth = require('../middleware/tokenAuth');
 const cloudinary = require('cloudinary').v2;
 const env = require('dotenv')
+const Amadeus = require('amadeus');
+const { response } = require('express');
 
 //establish cloudinary configuration for use uploading images
 cloudinary.config({
@@ -13,6 +15,52 @@ cloudinary.config({
     api_key: process.env.CLOUD_API,
     api_secret: process.env.CLOUD_SECRET,
 })
+
+const amadeus = new Amadeus({
+    clientId: process.env.AMADEUS_CLIENT_ID,
+    clientSecret: process.env.AMADEUS_CLIENT_SECRET,
+   // logger: new MyConsole(),
+    //logLevel: 'debug',
+})
+
+// router.get('/getAma', (req, res) => {
+//     return res.json(amadeus);
+// })
+// router.get(`/getAmadeus`, (req, res) =>{
+//     console.log("someone is requesting amadeus");
+//     console.log("the request", req.body);
+//     amadeus.shopping.activities.get({
+//          latitude: req.body.latitude,
+//         longitude: req.body.longitude,
+//     }).then((response) => {
+//          return res.json(response.data);
+//      }).catch(err => {
+//          return res.status(403).json({message:"error", err});
+//      })
+//     //return res.json(amadeus);
+//     // amadeus.referenceData.locations.pointsOfInterest.get({
+//     //     latitude : 41.397158,
+//     //     longitude : 2.160873
+//     //   }).then((response) => {
+//     //       return res.status(200).json(response.data);
+//     //   })
+//     amadeus.client.get(`"https://test.api.amadeus.com/v1/shopping/activities?longitude=-3.69170868&latitude=40.41436995&radius=1"`
+//     ).then((response) => {
+//         console.log(response.body);
+//         return res.json(response.body);
+//     })
+// })
+
+// Send the API Keys for use on the front end, tokenAuth??
+router.get(`/amadeusId`, tokenAuth, (req, res) => {
+
+    res.json(`${process.env.AMADEUS_CLIENT_ID}`);
+})
+// Send the API Keys for use on the front end, tokenAuth??
+router.get(`/amadeusSe`, tokenAuth, (req, res) => {
+    res.json(`${process.env.AMADEUS_CLIENT_SECRET}`)
+})
+
 
 //create a new user account and store the information as a JWT
 router.post("/signup", (req, res) => {
@@ -41,6 +89,7 @@ router.post("/signup", (req, res) => {
         res.status(500).json({ message: "an error occured", err })
     })
 })
+
 //login in to a current user account, verify encrypted password
 router.post("/login", (req, res) => {
     User.findOne({
@@ -163,6 +212,7 @@ router.get("/getByEmail/:email", tokenAuth, (req,res) => {
         return res.status(403).json({message:"error", err});
     })
 })
+
 //edit a user based on their ID
 router.put("/edit/:id", tokenAuth,  (req, res) => {
     console.log('req.body: ', req.body)
